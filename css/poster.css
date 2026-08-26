@@ -1,0 +1,382 @@
+/* ========================================
+   POSTER / INFOGRAPHIC - MAHA 2026 THEME
+   Navy, Yellow, Cyan branded infographic
+   ======================================== */
+
+.poster-container {
+    width: 1190px;
+}
+
+.poster {
+    background: #FCFAEE;
+    font-family: 'Inter', 'Poppins', sans-serif;
+    padding: 0;
+    min-height: 1680px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Top decorative stripe */
+.poster::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(90deg, #132149, #6FCCDD, #FFDE2F, #6FCCDD, #132149);
+    z-index: 10;
+}
+
+/* Bottom decorative stripe */
+.poster::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(90deg, #132149, #6FCCDD, #FFDE2F, #6FCCDD, #132149);
+    z-index: 10;
+}
+
+/* ===== POSTER HEADER ===== */
+.poster-header {
+    position: relative;
+    padding: 50px 60px 40px;
+    margin: 10px 0 0;
+    background: linear-gradient(160deg, #0b1638 0%, #132149 50%, #1a3060 100%);
+    overflow: hidden;
+}
+
+.poster-header-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(111,204,221,0.08) 1px, transparent 1px);
+    background-size: 5px 5px;
+    pointer-events: none;
+}
+
+.poster-header-content {
+    position: relative;
+    z-index: 3;
+    text-align: center;
+}
+
+.poster-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.poster-kpkm-logo {
+    height: 60px;
+    width: auto;
+}
+
+.poster-maha-logo {
+    height: 90px;
+    width: auto;
+}
+
+.poster-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: #FCFAEE;
+    letter-spacing: 4px;
+    margin-bottom: 0;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    line-height: 1.1;
+}
+
+.poster-subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFDE2F;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+
+.poster-tagline {
+    font-size: 14px;
+    color: #6FCCDD;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+.poster-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.poster-meta-item {
+    font-size: 13px;
+    color: rgba(252,250,238,0.9);
+    font-weight: 500;
+}
+
+.poster-meta-divider {
+    color: rgba(111,204,221,0.5);
+    font-size: 14px;
+}
+
+.poster-filter-info {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 28px;
+    background: rgba(255,222,47,0.15);
+    border: 1.5px solid rgba(255,222,47,0.4);
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #FFDE2F;
+    letter-spacing: 0.5px;
+}
+
+/* Mascots */
+.poster-mascot {
+    position: absolute;
+    bottom: 0;
+    height: 180px;
+    width: auto;
+    z-index: 2;
+    opacity: 0.9;
+}
+
+.poster-mascot-left {
+    left: 20px;
+    bottom: 10px;
+}
+
+.poster-mascot-right {
+    right: 20px;
+    bottom: 10px;
+}
+
+/* ===== POSTER BODY ===== */
+.poster-body {
+    padding: 30px 40px;
+}
+
+.poster-date-section {
+    margin-bottom: 28px;
+    break-inside: avoid;
+}
+
+.poster-date-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, #132149 0%, #1a3060 100%);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(19,33,73,0.15);
+}
+
+.poster-date-header .date-icon {
+    width: 42px;
+    height: 42px;
+    background: #FFDE2F;
+    color: #132149;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+}
+
+.poster-date-header .date-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FCFAEE;
+    letter-spacing: 0.3px;
+}
+
+.poster-date-header .date-day {
+    font-size: 12px;
+    color: #6FCCDD;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ===== POSTER TABLE ===== */
+.poster-schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 6px;
+    font-size: 11.5px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(19,33,73,0.08);
+}
+
+.poster-schedule-table thead th {
+    background: #1a3060;
+    color: #FCFAEE;
+    padding: 10px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-align: left;
+}
+
+.poster-schedule-table thead th:first-child {
+    border-radius: 8px 0 0 0;
+    padding-left: 16px;
+}
+
+.poster-schedule-table thead th:last-child {
+    border-radius: 0 8px 0 0;
+    padding-right: 16px;
+}
+
+.poster-schedule-table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e8e5d8;
+    vertical-align: top;
+    line-height: 1.5;
+    background: #fff;
+}
+
+.poster-schedule-table tbody tr:nth-child(even) td {
+    background: #faf9f3;
+}
+
+.poster-schedule-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.poster-schedule-table tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 8px;
+}
+
+.poster-schedule-table tbody tr:last-child td:last-child {
+    border-radius: 0 0 8px 0;
+}
+
+.poster-schedule-table .col-masa {
+    font-weight: 700;
+    color: #132149;
+    white-space: nowrap;
+    width: 90px;
+    font-size: 12px;
+    padding-left: 16px;
+}
+
+.poster-schedule-table .col-program {
+    font-weight: 600;
+    color: #0a1230;
+    min-width: 280px;
+    font-size: 11.5px;
+}
+
+.poster-schedule-table .col-lokasi {
+    color: #555;
+    font-size: 10.5px;
+    width: 180px;
+    font-weight: 500;
+}
+
+.poster-schedule-table .col-vip {
+    font-weight: 700;
+    color: #132149;
+    width: 150px;
+    font-size: 11px;
+    padding-right: 16px;
+}
+
+.poster-schedule-table .col-vip .vip-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #FFDE2F, #f5c518);
+    color: #132149;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 9.5px;
+    font-weight: 700;
+}
+
+/* ===== POSTER FOOTER ===== */
+.poster-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    margin-top: 20px;
+    background: linear-gradient(90deg, #132149, #1a3060);
+    border-top: 4px solid #FFDE2F;
+}
+
+.poster-footer-brand {
+    display: flex;
+    align-items: center;
+}
+
+.poster-footer-logo {
+    height: 44px;
+    width: auto;
+}
+
+.poster-footer-info {
+    text-align: center;
+}
+
+.poster-footer-info p {
+    font-size: 11px;
+    color: rgba(252,250,238,0.85);
+    margin-bottom: 2px;
+}
+
+.poster-footer-info p strong {
+    color: #FCFAEE;
+    font-weight: 700;
+}
+
+.poster-footer-qr {
+    display: flex;
+    align-items: center;
+}
+
+.poster-footer-badge {
+    display: inline-block;
+    background: #FFDE2F;
+    color: #132149;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* ===== LANDSCAPE VARIANT ===== */
+.poster.landscape {
+    width: 1680px;
+    min-height: 1190px;
+}
+
+.poster.landscape .poster-body {
+    columns: 2;
+    column-gap: 30px;
+}
+
+.poster.landscape .poster-date-section {
+    break-inside: avoid;
+}
+
+.poster.landscape .poster-mascot {
+    height: 150px;
+}

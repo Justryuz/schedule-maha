@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadual VIP MAHA 2026 | FAMA</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/poster.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Header with MAHA branding -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="https://mahaofficial.com.my/assets/maha-2026-logo.webp" alt="MAHA 2026" class="header-logo">
+                <div class="logo-text">
+                    <h1>JADUAL VIP</h1>
+                    <p>MAHA 2026 &bull; FAMA</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" id="btnRefresh" title="Muat Semula Data">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Muat Semula</span>
+                </button>
+                <button class="btn btn-primary" id="btnExportPDF" title="Cetak Poster PDF">
+                    <i class="fas fa-file-pdf"></i>
+                    <span>Cetak Poster</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner with Countdown & Mascots -->
+    <section class="hero-banner">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-inner">
+            <div class="hero-left">
+                <div class="hero-logos">
+                    <img src="https://mahaofficial.com.my/assets/KPKM-white.png" alt="KPKM" class="hero-kpkm-logo">
+                    <img src="https://mahaofficial.com.my/assets/maha-2026-logo.webp" alt="MAHA 2026" class="hero-maha-logo">
+                </div>
+                <h2 class="hero-title">PENCIPTAAN NILAI DEMI<br><span class="highlight">KETERJAMINAN MAKANAN</span></h2>
+                <div class="hero-meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div>
+                            <span class="meta-label">Tarikh</span>
+                            <span class="meta-value">28 Ogos – 6 September 2026</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <span class="meta-label">Waktu</span>
+                            <span class="meta-value">10:00 AM – 10:00 PM</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <span class="meta-label">Tempat</span>
+                            <span class="meta-value">MAEPS, Serdang, Selangor</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Countdown -->
+                <div class="countdown" id="countdown">
+                    <div class="cd-cell">
+                        <span class="cd-num" id="cdDays">000</span>
+                        <span class="cd-lbl">Hari</span>
+                    </div>
+                    <div class="cd-cell">
+                        <span class="cd-num" id="cdHours">00</span>
+                        <span class="cd-lbl">Jam</span>
+                    </div>
+                    <div class="cd-cell">
+                        <span class="cd-num" id="cdMins">00</span>
+                        <span class="cd-lbl">Minit</span>
+                    </div>
+                    <div class="cd-cell">
+                        <span class="cd-num" id="cdSecs">00</span>
+                        <span class="cd-lbl">Saat</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <img src="https://mahaofficial.com.my/assets/che-lah-5.png" alt="Che Lah" class="mascot mascot-left">
+                <img src="https://mahaofficial.com.my/assets/che-yam-2.png" alt="Che Yam" class="mascot mascot-right">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+            <div class="stat-info">
+                <span class="stat-value" id="statTarikh">0</span>
+                <span class="stat-label">Hari</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+            <div class="stat-info">
+                <span class="stat-value" id="statProgram">0</span>
+                <span class="stat-label">Program</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
+            <div class="stat-info">
+                <span class="stat-value" id="statVIP">0</span>
+                <span class="stat-label">VIP</span>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="stat-info">
+                <span class="stat-value" id="statLokasi">0</span>
+                <span class="stat-label">Lokasi</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section (no status filter) -->
+    <section class="filter-section">
+        <div class="filter-header">
+            <h2><i class="fas fa-filter"></i> Tapis Jadual</h2>
+            <button class="btn btn-sm btn-ghost" id="btnResetFilter">
+                <i class="fas fa-times-circle"></i> Reset
+            </button>
+        </div>
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label for="filterTarikh"><i class="fas fa-calendar"></i> Tarikh</label>
+                <select id="filterTarikh">
+                    <option value="">Semua Tarikh</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterLokasi"><i class="fas fa-map-pin"></i> Lokasi</label>
+                <select id="filterLokasi">
+                    <option value="">Semua Lokasi</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterVIP"><i class="fas fa-user-shield"></i> Nama VIP</label>
+                <select id="filterVIP">
+                    <option value="">Semua VIP</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="filterStatus"><i class="fas fa-info-circle"></i> Status</label>
+                <select id="filterStatus">
+                    <option value="">Semua Status</option>
+                </select>
+            </div>
+        </div>
+        <div class="filter-result-count">
+            <span id="resultCount">0</span> program dipaparkan
+        </div>
+    </section>
+
+    <!-- Schedule Table (no status column) -->
+    <section class="schedule-section">
+        <div class="table-container">
+            <table class="schedule-table" id="scheduleTable">
+                <thead>
+                    <tr>
+                        <th class="th-no">#</th>
+                        <th class="th-program">Program</th>
+                        <th class="th-tarikh">Tarikh</th>
+                        <th class="th-masa">Masa</th>
+                        <th class="th-lokasi">Lokasi</th>
+                        <th class="th-vip">VIP</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleBody">
+                </tbody>
+            </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="fas fa-search"></i>
+            <p>Tiada program dijumpai berdasarkan tapisan anda.</p>
+        </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader">
+            <div class="spinner"></div>
+            <p>Memuat data jadual VIP...</p>
+        </div>
+    </div>
+
+    <!-- PDF Export Modal -->
+    <div class="modal-overlay" id="pdfModal" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-pdf"></i> Cetak Poster PDF</h3>
+                <button class="btn-close" id="btnCloseModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-option">
+                    <label>Format Poster:</label>
+                    <select id="posterFormat">
+                        <option value="filtered">Berdasarkan Tapisan Semasa</option>
+                        <option value="bydate">Mengikut Tarikh Terpilih</option>
+                        <option value="byvip">Mengikut VIP Terpilih</option>
+                        <option value="all">Semua Program</option>
+                    </select>
+                </div>
+                <div class="modal-option">
+                    <label>Orientasi:</label>
+                    <select id="posterOrientation">
+                        <option value="portrait">Potret (A3)</option>
+                        <option value="landscape">Landskap (A3)</option>
+                    </select>
+                </div>
+                <div class="modal-preview">
+                    <p><i class="fas fa-info-circle"></i> Poster akan dijana sebagai infografik profesional dalam format PDF.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btnCancelPDF">Batal</button>
+                <button class="btn btn-primary" id="btnGeneratePDF">
+                    <i class="fas fa-download"></i> Jana PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Poster Template for PDF Generation -->
+    <div id="posterContainer" class="poster-container" style="position:absolute; left:-9999px; top:0;">
+        <div class="poster" id="posterContent">
+            <!-- Poster Header with full branding -->
+            <div class="poster-header">
+                <div class="poster-header-bg"></div>
+                <div class="poster-header-content">
+                    <div class="poster-logos">
+                        <img src="https://mahaofficial.com.my/assets/KPKM-white.png" alt="KPKM" class="poster-kpkm-logo" crossorigin="anonymous">
+                        <img src="https://mahaofficial.com.my/assets/maha-2026-logo.webp" alt="MAHA 2026" class="poster-maha-logo" crossorigin="anonymous">
+                    </div>
+                    <h1 class="poster-title">JADUAL VIP</h1>
+                    <h2 class="poster-subtitle">MAHA 2026</h2>
+                    <p class="poster-tagline">PENCIPTAAN NILAI DEMI KETERJAMINAN MAKANAN</p>
+                    <div class="poster-meta-row">
+                        <span class="poster-meta-item">📅 28 Ogos – 6 Sep 2026</span>
+                        <span class="poster-meta-divider">|</span>
+                        <span class="poster-meta-item">📍 MAEPS, Serdang</span>
+                        <span class="poster-meta-divider">|</span>
+                        <span class="poster-meta-item">🕙 10:00 AM – 10:00 PM</span>
+                    </div>
+                    <div class="poster-filter-info" id="posterFilterInfo"></div>
+                </div>
+                <!-- Mascots in header -->
+                <img src="https://mahaofficial.com.my/assets/che-lah-5.png" alt="" class="poster-mascot poster-mascot-left" crossorigin="anonymous">
+                <img src="https://mahaofficial.com.my/assets/che-yam-2.png" alt="" class="poster-mascot poster-mascot-right" crossorigin="anonymous">
+            </div>
+
+            <!-- Poster Body (populated by JS) -->
+            <div class="poster-body" id="posterBody"></div>
+
+            <!-- Poster Footer -->
+            <div class="poster-footer">
+                <div class="poster-footer-brand">
+                    <img src="https://mahaofficial.com.my/assets/maha-2026-logo.webp" alt="MAHA 2026" class="poster-footer-logo" crossorigin="anonymous">
+                </div>
+                <div class="poster-footer-info">
+                    <p><strong>Lembaga Pemasaran Pertanian Persekutuan (FAMA)</strong></p>
+                    <p>mahaofficial.com.my</p>
+                </div>
+                <div class="poster-footer-qr">
+                    <span class="poster-footer-badge">MAHA 2026</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/pdf-export.js"></script>
+</body>
+</html>
