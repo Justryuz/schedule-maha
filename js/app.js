@@ -777,7 +777,7 @@ function renderUtamaTable(data) {
                     <td class="td-masa">${escapeHtml(item.masa)}</td>
                     <td class="td-program">${escapeHtml(item.program)}</td>
                     <td class="td-lokasi">${escapeHtml(item.lokasi)}</td>
-                    <td class="td-vip">${escapeHtml(item.vip)}</td>
+                    <td class="td-vip">${renderVipBadges(item.vip)}</td>
                 </tr>`;
             });
         });
@@ -787,7 +787,7 @@ function renderUtamaTable(data) {
             <td class="td-masa">${escapeHtml(item.masa)}</td>
             <td class="td-program">${escapeHtml(item.program)}</td>
             <td class="td-lokasi">${escapeHtml(item.lokasi)}</td>
-            <td class="td-vip">${escapeHtml(item.vip)}</td>
+            <td class="td-vip">${renderVipBadges(item.vip)}</td>
         </tr>`).join('');
     }
 }
@@ -943,7 +943,7 @@ function renderFullSchedule(data) {
                 <th class="th-masa">MASA</th><th class="th-program">PROGRAM</th><th class="th-lokasi">KLUSTER/LOKASI</th><th class="th-vip">VIP</th>
             </tr></thead><tbody>`;
         group.items.forEach(item => {
-            html += `<tr><td class="td-masa">${escapeHtml(item.masa)}</td><td class="td-program">${escapeHtml(item.program)}</td><td class="td-lokasi">${escapeHtml(item.lokasi)}</td><td class="td-vip">${escapeHtml(item.vip)}</td></tr>`;
+            html += `<tr><td class="td-masa">${escapeHtml(item.masa)}</td><td class="td-program">${escapeHtml(item.program)}</td><td class="td-lokasi">${escapeHtml(item.lokasi)}</td><td class="td-vip">${renderVipBadges(item.vip)}</td></tr>`;
         });
         html += `</tbody></table></div></div>`;
     });
