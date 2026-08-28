@@ -956,7 +956,16 @@ function toggleDateSection(header) {
 // ========== EKSEKUTIF TAB ==========
 function updateExecStats() {
     const vipSet = new Set(), lokasiSet = new Set();
-    allData.forEach(item => { if (item.vip) vipSet.add(item.vip); if (item.lokasi) lokasiSet.add(item.lokasi); });
+    allData.forEach(item => {
+        // Count distinct individual VIP names (split by comma)
+        if (item.vip) {
+            item.vip.split(',').forEach(v => {
+                const trimmed = v.trim();
+                if (trimmed) vipSet.add(trimmed);
+            });
+        }
+        if (item.lokasi) lokasiSet.add(item.lokasi);
+    });
     document.getElementById('execVipCount').textContent = vipSet.size;
     document.getElementById('execLokasiCount').textContent = lokasiSet.size;
     document.getElementById('execProgramCount').textContent = allData.length;
@@ -999,9 +1008,39 @@ function renderVipByAdminChart() {
     const ctx = document.getElementById('chartVipByAdmin');
     if (!ctx) return;
     if (chartInstances.vipByAdmin) chartInstances.vipByAdmin.destroy();
-    const cats = { 'MENTERI': ['YBM', 'YBTM', 'YB '], 'KPKM': ['KSU', 'TKSU', 'TKP', 'PK ', 'SUB'], 'FAMA': ['PENGERUSI FAMA', 'KP FAMA', 'TPKP', 'PKP'] };
-    const counts = { 'MENTERI': 0, 'KPKM': 0, 'FAMA': 0 };
-    allData.forEach(item => { if (!item.vip) return; const v = item.vip.toUpperCase(); for (const [cat, kw] of Object.entries(cats)) { for (const k of kw) { if (v.includes(k)) { counts[cat]++; break; } } } });
+
+    // Categorize distinct VIP persons by administration
+    const cats = {
+        'FAMA': ['FAMA', 'PENGERUSI FAMA', 'KP FAMA', 'TKP', 'PUSPANITA'],
+        'KPKM': ['KSU KPKM', 'TKSU', 'TKSUD'],
+        'MENTERI': ['YBM', 'YBTM', 'PERDANA MENTERI']
+    };
+
+    // Get all distinct VIP names first
+    const allVips = new Set();
+    allData.forEach(item => {
+        if (item.vip) {
+            item.vip.split(',').forEach(v => {
+                const trimmed = v.trim();
+                if (trimmed) allVips.add(trimmed);
+            });
+        }
+    });
+
+    // Count distinct persons per category
+    const counts = { 'FAMA': 0, 'KPKM': 0, 'MENTERI': 0 };
+    allVips.forEach(vipName => {
+        const upper = vipName.toUpperCase();
+        for (const [cat, keywords] of Object.entries(cats)) {
+            for (const kw of keywords) {
+                if (upper.includes(kw.toUpperCase())) {
+                    counts[cat]++;
+                    return; // Each person counted once only
+                }
+            }
+        }
+    });
+
     chartInstances.vipByAdmin = new Chart(ctx, {
         type: 'bar', data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: '#d4a017', borderRadius: 3, barThickness: 16 }] },
         options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } }, y: { ticks: { font: { size: 11, weight: '600' } }, grid: { display: false } } } }
