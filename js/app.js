@@ -166,6 +166,9 @@ function setupEventListeners() {
 
     // TAPIS (apply filter) button in mobile filter sheet
     document.getElementById('btnApplyFilter').addEventListener('click', applyMobileFilters);
+    
+    // RESET filter button in mobile filter sheet
+    document.getElementById('btnResetFilter').addEventListener('click', resetMobileFilters);
 
     // MUAT SEMULA (reload) button
     document.getElementById('btnReload').addEventListener('click', loadData);
@@ -217,7 +220,37 @@ function applyMobileFilters() {
     document.getElementById('filterLokasi').value = document.getElementById('filterLokasiMobile').value;
     document.getElementById('filterVIP').value = document.getElementById('filterVIPMobile').value;
     document.getElementById('searchInput').value = document.getElementById('searchInputMobile').value;
+    
+    // Also apply to jadual penuh filters
+    document.getElementById('filterProgramFull').value = document.getElementById('filterProgramMobile').value;
+    document.getElementById('filterLokasiFull').value = document.getElementById('filterLokasiMobile').value;
+    document.getElementById('filterVIPFull').value = document.getElementById('filterVIPMobile').value;
+    document.getElementById('searchInputFull').value = document.getElementById('searchInputMobile').value;
+    
     applyUtamaFilters();
+    applyFullFilters();
+    closeFilterSheet();
+}
+
+function resetMobileFilters() {
+    // Clear all mobile filter values
+    document.getElementById('filterProgramMobile').value = '';
+    document.getElementById('filterLokasiMobile').value = '';
+    document.getElementById('filterVIPMobile').value = '';
+    document.getElementById('searchInputMobile').value = '';
+    
+    // Clear desktop filter values too
+    document.getElementById('filterProgram').value = '';
+    document.getElementById('filterLokasi').value = '';
+    document.getElementById('filterVIP').value = '';
+    document.getElementById('searchInput').value = '';
+    document.getElementById('filterProgramFull').value = '';
+    document.getElementById('filterLokasiFull').value = '';
+    document.getElementById('filterVIPFull').value = '';
+    document.getElementById('searchInputFull').value = '';
+    
+    applyUtamaFilters();
+    applyFullFilters();
     closeFilterSheet();
 }
 

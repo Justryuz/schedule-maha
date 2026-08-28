@@ -1311,9 +1311,9 @@ body {
 }
 
 .btn-apply-filter {
-    width: 100%;
+    flex: 1;
     padding: 0.75rem;
-    margin-top: 1rem;
+    margin-top: 0;
     background: var(--primary-navy);
     color: #fff;
     border: none;
@@ -1327,6 +1327,31 @@ body {
 
 .btn-apply-filter:hover {
     background: var(--primary-navy-dark);
+}
+
+.filter-sheet-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn-reset-filter {
+    flex: 1;
+    padding: 0.75rem;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    border: 1.5px solid var(--border-medium);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.btn-reset-filter:hover {
+    background: var(--bg-light);
+    border-color: var(--text-muted);
 }
 
 /* ========== FILTER TRIGGER BUTTON (Mobile) ========== */
