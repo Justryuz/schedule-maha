@@ -1973,3 +1973,35 @@ body.dark-mode .date-picker-popup {
 body.dark-mode .date-picker-item:hover {
     background: #1e2a45;
 }
+
+
+/* ========== FILTER DATE HEADER ROW ========== */
+.filter-date-row td {
+    background: var(--primary-navy) !important;
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.6rem 1.2rem !important;
+    letter-spacing: 0.3px;
+}
+
+.filter-date-row td i {
+    margin-right: 0.5rem;
+    opacity: 0.8;
+}
+
+.mobile-date-header {
+    background: var(--primary-navy);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.3px;
+}
+
+.mobile-date-header:first-child {
+    margin-top: 0;
+}

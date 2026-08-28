@@ -752,12 +752,41 @@ function renderUtamaTable(data) {
     const empty = document.getElementById('emptyStateUtama');
     if (data.length === 0) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
     empty.style.display = 'none';
-    tbody.innerHTML = data.map(item => `<tr>
-        <td class="td-masa">${escapeHtml(item.masa)}</td>
-        <td class="td-program">${escapeHtml(item.program)}</td>
-        <td class="td-lokasi">${escapeHtml(item.lokasi)}</td>
-        <td class="td-vip">${escapeHtml(item.vip)}</td>
-    </tr>`).join('');
+
+    // Check if filter is active (showing cross-date results)
+    const hasFilter = document.getElementById('filterProgram').value ||
+                      document.getElementById('filterLokasi').value ||
+                      document.getElementById('filterVIP').value ||
+                      document.getElementById('searchInput').value.trim();
+
+    if (hasFilter) {
+        // Group by date and show date headers
+        const grouped = new Map();
+        data.forEach(item => {
+            if (!grouped.has(item.tarikh)) grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
+            grouped.get(item.tarikh).items.push(item);
+        });
+        let html = '';
+        grouped.forEach(group => {
+            html += `<tr class="filter-date-row"><td colspan="4"><i class="fas fa-calendar-day"></i> ${group.hari.toUpperCase()}, ${group.formatted.toUpperCase()}</td></tr>`;
+            group.items.forEach(item => {
+                html += `<tr>
+                    <td class="td-masa">${escapeHtml(item.masa)}</td>
+                    <td class="td-program">${escapeHtml(item.program)}</td>
+                    <td class="td-lokasi">${escapeHtml(item.lokasi)}</td>
+                    <td class="td-vip">${escapeHtml(item.vip)}</td>
+                </tr>`;
+            });
+        });
+        tbody.innerHTML = html;
+    } else {
+        tbody.innerHTML = data.map(item => `<tr>
+            <td class="td-masa">${escapeHtml(item.masa)}</td>
+            <td class="td-program">${escapeHtml(item.program)}</td>
+            <td class="td-lokasi">${escapeHtml(item.lokasi)}</td>
+            <td class="td-vip">${escapeHtml(item.vip)}</td>
+        </tr>`).join('');
+    }
 }
 
 // ========== MOBILE CARD RENDERING ==========
@@ -768,16 +797,47 @@ function renderUtamaMobileCards(data) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>Tiada program dijumpai.</p></div>';
         return;
     }
-    container.innerHTML = data.map(item => `
-        <div class="schedule-card">
-            <div class="card-time">${escapeHtml(item.masa)}</div>
-            <div class="card-body">
-                <div class="card-program">${escapeHtml(item.program)}</div>
-                <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
-                <div class="card-vips">${renderVipBadges(item.vip)}</div>
+
+    // Check if filter is active
+    const hasFilter = document.getElementById('filterProgram').value ||
+                      document.getElementById('filterLokasi').value ||
+                      document.getElementById('filterVIP').value ||
+                      document.getElementById('searchInput').value.trim();
+
+    if (hasFilter) {
+        // Group by date with date headers
+        const grouped = new Map();
+        data.forEach(item => {
+            if (!grouped.has(item.tarikh)) grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
+            grouped.get(item.tarikh).items.push(item);
+        });
+        let html = '';
+        grouped.forEach(group => {
+            html += `<div class="mobile-date-header">${group.hari.toUpperCase()}, ${group.formatted.toUpperCase()}</div>`;
+            group.items.forEach(item => {
+                html += `<div class="schedule-card">
+                    <div class="card-time">${escapeHtml(item.masa)}</div>
+                    <div class="card-body">
+                        <div class="card-program">${escapeHtml(item.program)}</div>
+                        <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
+                        <div class="card-vips">${renderVipBadges(item.vip)}</div>
+                    </div>
+                </div>`;
+            });
+        });
+        container.innerHTML = html;
+    } else {
+        container.innerHTML = data.map(item => `
+            <div class="schedule-card">
+                <div class="card-time">${escapeHtml(item.masa)}</div>
+                <div class="card-body">
+                    <div class="card-program">${escapeHtml(item.program)}</div>
+                    <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
+                    <div class="card-vips">${renderVipBadges(item.vip)}</div>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 }
 
 function renderFullMobileCards(data) {
