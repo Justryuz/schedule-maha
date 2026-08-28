@@ -1714,11 +1714,12 @@ body {
     .exec-stats {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 0.4rem;
+        gap: 0.5rem;
     }
     .exec-stat-card {
         padding: 0.6rem 0.5rem;
         min-width: 0;
+        margin: 0;
     }
     .exec-stat-label {
         font-size: 0.6rem;
@@ -1732,6 +1733,8 @@ body {
     }
     .exec-charts {
         grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
     }
 
     /* Mobile exec tagline */
