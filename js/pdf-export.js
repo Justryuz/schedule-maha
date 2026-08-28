@@ -1,171 +1,95 @@
 /* ========================================
-   JADUAL VIP MAHA 2026 - PDF Export
-   Generates infographic poster as PDF
+   JADUAL VIP MAHA 2026 - Professional PDF Export
+   Untuk pegawai khas & PA Menteri/KSU
    ======================================== */
 
-async function generatePDF() {
-    const format = document.getElementById('posterFormat').value;
-    const orientation = document.getElementById('posterOrientation').value;
+async function generateSchedulePDF(type) {
+    let data;
+    let dateLabel = '';
+    let dateSubtitle = '';
 
-    // Get data based on selected format
-    let exportData = [];
-    let filterLabel = '';
-
-    switch (format) {
-        case 'filtered':
-            exportData = filteredData;
-            filterLabel = getActiveFilterLabel();
-            break;
-        case 'bydate':
-            const selectedDate = document.getElementById('filterTarikh').value;
-            if (selectedDate) {
-                exportData = allData.filter(item => item.tarikh === selectedDate);
-                const dateItem = exportData[0];
-                filterLabel = dateItem ? `${dateItem.tarikhFormatted} (${dateItem.hari})` : selectedDate;
-            } else {
-                exportData = filteredData;
-                filterLabel = 'Semua Tarikh';
-            }
-            break;
-        case 'byvip':
-            const selectedVIP = document.getElementById('filterVIP').value;
-            if (selectedVIP) {
-                exportData = allData.filter(item => item.vip === selectedVIP);
-                filterLabel = selectedVIP;
-            } else {
-                exportData = filteredData;
-                filterLabel = 'Semua VIP';
-            }
-            break;
-        case 'all':
-            exportData = allData;
-            filterLabel = 'Semua Program';
-            break;
+    if (type === 'today') {
+        if (availableDates.length > 0) {
+            const currentDate = availableDates[currentDateIndex];
+            data = allData.filter(item => item.tarikh === currentDate.key);
+            dateLabel = `${currentDate.hari.toUpperCase()}, ${currentDate.formatted.toUpperCase()}`;
+            dateSubtitle = `${data.length} Program Dijadualkan`;
+        } else {
+            data = filteredDataUtama;
+            dateLabel = 'HARI INI';
+        }
+    } else {
+        data = filteredDataFull.length > 0 ? filteredDataFull : allData;
+        dateLabel = 'JADUAL PENUH PROGRAM';
+        dateSubtitle = `28 Ogos - 6 September 2026 | ${data.length} Program`;
     }
 
-    if (exportData.length === 0) {
-        alert('Tiada data untuk dicetak. Sila pilih tapisan yang mempunyai data.');
+    if (data.length === 0) {
+        alert('Tiada data untuk dimuat turun.');
         return;
     }
 
-    closePDFModal();
     showLoading(true);
 
     try {
-        // Build poster content
-        buildPosterContent(exportData, filterLabel, orientation);
-
-        // Wait for images to load and DOM to render
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const posterEl = document.getElementById('posterContent');
-        const container = document.getElementById('posterContainer');
-
-        // Make poster visible for rendering
-        container.style.position = 'absolute';
-        container.style.left = '-9999px';
-        container.style.top = '0';
+        const pdfHtml = buildProfessionalPDF(data, dateLabel, dateSubtitle, type);
+        const container = document.getElementById('pdfContainer');
+        const content = document.getElementById('pdfContent');
+        content.innerHTML = pdfHtml;
         container.style.display = 'block';
 
-        // Apply orientation class
-        if (orientation === 'landscape') {
-            posterEl.classList.add('landscape');
-            container.style.width = '1680px';
-        } else {
-            posterEl.classList.remove('landscape');
-            container.style.width = '1190px';
-        }
+        // Wait for rendering
+        await new Promise(resolve => setTimeout(resolve, 800));
 
-        // Wait for layout
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Preload all images in poster
-        const posterImages = posterEl.querySelectorAll('img');
-        await Promise.all([...posterImages].map(img => {
-            if (img.complete) return Promise.resolve();
-            return new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-        }));
-
-        // Generate canvas
-        const canvas = await html2canvas(posterEl, {
+        const canvas = await html2canvas(content, {
             scale: 2,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: '#FCFAEE',
+            backgroundColor: '#ffffff',
             logging: false,
-            width: posterEl.scrollWidth,
-            height: posterEl.scrollHeight,
-            onclone: function(clonedDoc) {
-                const clonedPoster = clonedDoc.getElementById('posterContent');
-                if (clonedPoster) {
-                    clonedPoster.style.display = 'block';
-                }
-            }
+            width: content.scrollWidth,
+            height: content.scrollHeight
         });
 
-        // Generate PDF
         const { jsPDF } = window.jspdf;
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-        let pdf;
-        if (orientation === 'landscape') {
-            pdf = new jsPDF('landscape', 'mm', 'a3');
-        } else {
-            pdf = new jsPDF('portrait', 'mm', 'a3');
-        }
-
+        const pdf = new jsPDF('portrait', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
-        // Calculate dimensions to fit content
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
         const imgWidth = canvas.width;
         const imgHeight = canvas.height;
-        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+        const ratio = pdfWidth / imgWidth;
+        const scaledHeight = imgHeight * ratio;
 
-        const finalWidth = imgWidth * ratio;
-        const finalHeight = imgHeight * ratio;
-
-        // If content exceeds one page, paginate
-        if (finalHeight > pdfHeight) {
-            // Multi-page approach
-            const pageHeight = pdfHeight;
-            const scaledPageHeight = (pageHeight / ratio);
+        if (scaledHeight <= pdfHeight) {
+            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, scaledHeight);
+        } else {
+            const pageHeightPx = pdfHeight / ratio;
             let position = 0;
-            let pageNum = 0;
-
+            let page = 0;
             while (position < imgHeight) {
-                if (pageNum > 0) {
-                    pdf.addPage();
-                }
-
-                // Create a slice of the canvas for this page
-                const sliceHeight = Math.min(scaledPageHeight, imgHeight - position);
+                if (page > 0) pdf.addPage();
+                const sliceH = Math.min(pageHeightPx, imgHeight - position);
                 const sliceCanvas = document.createElement('canvas');
                 sliceCanvas.width = imgWidth;
-                sliceCanvas.height = sliceHeight;
+                sliceCanvas.height = sliceH;
                 const ctx = sliceCanvas.getContext('2d');
-                ctx.drawImage(canvas, 0, position, imgWidth, sliceHeight, 0, 0, imgWidth, sliceHeight);
-
+                ctx.drawImage(canvas, 0, position, imgWidth, sliceH, 0, 0, imgWidth, sliceH);
                 const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-                const sliceFinalHeight = sliceHeight * ratio;
-                pdf.addImage(sliceData, 'JPEG', 0, 0, pdfWidth, sliceFinalHeight);
-
-                position += sliceHeight;
-                pageNum++;
+                pdf.addImage(sliceData, 'JPEG', 0, 0, pdfWidth, sliceH * ratio);
+                position += sliceH;
+                page++;
             }
-        } else {
-            // Single page - center content
-            const xOffset = (pdfWidth - finalWidth) / 2;
-            const yOffset = 0;
-            pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
         }
 
-        // Save
-        const filename = `Jadual_VIP_MAHA2026_${format}_${new Date().toISOString().slice(0,10)}.pdf`;
+        const now = new Date();
+        const timestamp = now.toISOString().slice(0, 10);
+        const filename = `Jadual_VIP_MAHA2026_${type === 'today' ? 'Harian' : 'Penuh'}_${timestamp}.pdf`;
         pdf.save(filename);
+
+        container.style.display = 'none';
+        content.innerHTML = '';
 
     } catch (error) {
         console.error('PDF generation error:', error);
@@ -175,77 +99,96 @@ async function generatePDF() {
     }
 }
 
-function buildPosterContent(data, filterLabel, orientation) {
-    const posterBody = document.getElementById('posterBody');
-    const posterFilterInfo = document.getElementById('posterFilterInfo');
-
-    // Set filter info
-    posterFilterInfo.textContent = filterLabel ? `${filterLabel} \u2022 ${data.length} Program` : `${data.length} Program`;
+function buildProfessionalPDF(data, dateLabel, dateSubtitle, type) {
+    const mahaLogo = 'https://mahaofficial.com.my/assets/maha-2026-logo.webp';
+    const jataLogo = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Coat_of_arms_of_Malaysia.svg/120px-Coat_of_arms_of_Malaysia.svg.png';
 
     // Group by date
     const grouped = new Map();
     data.forEach(item => {
-        const key = item.tarikhFormatted;
-        if (!grouped.has(key)) {
-            grouped.set(key, {
-                date: item.tarikhFormatted,
-                hari: item.hari,
-                dateObj: item.tarikhObj,
-                items: []
-            });
+        if (!grouped.has(item.tarikh)) {
+            grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
         }
-        grouped.get(key).items.push(item);
+        grouped.get(item.tarikh).items.push(item);
     });
 
-    let html = '';
-
+    let bodyHtml = '';
+    let dateCount = 0;
     grouped.forEach((group) => {
-        html += `<div class="poster-date-section">`;
-        html += `<div class="poster-date-header">
-            <div class="date-icon">${group.dateObj ? group.dateObj.getDate() : ''}</div>
-            <div>
-                <div class="date-text">${group.date}</div>
-                <div class="date-day">${group.hari}</div>
+        dateCount++;
+        const hariUpper = group.hari ? group.hari.toUpperCase() : '';
+
+        bodyHtml += `
+        <div style="margin-top:${dateCount === 1 ? '0' : '24px'};page-break-inside:avoid;">
+            <div style="background:#1a2057;color:#fff;padding:10px 20px;border-radius:6px;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:18px;">&#128197;</span>
+                <span style="font-weight:700;font-size:13px;letter-spacing:0.5px;">${hariUpper}, ${group.formatted.toUpperCase()}</span>
+                <span style="margin-left:auto;font-size:11px;opacity:0.7;">${group.items.length} program</span>
             </div>
-        </div>`;
+            <table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
+                <thead>
+                    <tr>
+                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:110px;">Masa</th>
+                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;">Program</th>
+                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:170px;">Kluster/Lokasi</th>
+                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:180px;">VIP</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-        html += `<table class="poster-schedule-table">
-            <thead>
-                <tr>
-                    <th>Masa</th>
-                    <th>Program</th>
-                    <th>Lokasi</th>
-                    <th>VIP</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        group.items.forEach(item => {
-            html += `<tr>
-                <td class="col-masa">${item.masa}</td>
-                <td class="col-program">${escapeHtml(item.program)}</td>
-                <td class="col-lokasi">${escapeHtml(item.lokasi)}</td>
-                <td class="col-vip"><span class="vip-badge">${escapeHtml(item.vip)}</span></td>
-            </tr>`;
+        group.items.forEach((item, i) => {
+            const bg = i % 2 === 0 ? '#ffffff' : '#fafafa';
+            bodyHtml += `
+                    <tr style="background:${bg};">
+                        <td style="padding:9px 14px;font-weight:600;font-size:11px;color:#1a2057;border-bottom:1px solid #eee;white-space:nowrap;">${escapeHtml(item.masa)}</td>
+                        <td style="padding:9px 14px;font-size:11px;color:#333;border-bottom:1px solid #eee;line-height:1.4;">${escapeHtml(item.program)}</td>
+                        <td style="padding:9px 14px;font-size:10.5px;color:#555;border-bottom:1px solid #eee;">${escapeHtml(item.lokasi)}</td>
+                        <td style="padding:9px 14px;font-size:10.5px;color:#1a2057;font-weight:600;border-bottom:1px solid #eee;">${escapeHtml(item.vip)}</td>
+                    </tr>`;
         });
 
-        html += `</tbody></table></div>`;
+        bodyHtml += `</tbody></table></div>`;
     });
 
-    posterBody.innerHTML = html;
-}
+    // Generated timestamp
+    const now = new Date();
+    const genTime = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-function getActiveFilterLabel() {
-    const parts = [];
-    const tarikh = document.getElementById('filterTarikh');
-    const lokasi = document.getElementById('filterLokasi');
-    const vip = document.getElementById('filterVIP');
-    const status = document.getElementById('filterStatus');
+    return `
+    <div style="font-family:'Inter','Segoe UI',sans-serif;width:900px;background:#fff;padding:0;">
+        <!-- Professional Header -->
+        <div style="padding:28px 36px 20px;border-bottom:3px solid #fbb034;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                    <img src="${jataLogo}" style="height:52px;" crossorigin="anonymous">
+                    <div>
+                        <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Kementerian Pertanian dan Keterjaminan Makanan</div>
+                        <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;">Lembaga Pemasaran Pertanian Persekutuan (FAMA)</div>
+                    </div>
+                </div>
+                <img src="${mahaLogo}" style="height:56px;" crossorigin="anonymous">
+            </div>
+            <div style="margin-top:18px;text-align:center;">
+                <h1 style="font-family:'Poppins',sans-serif;font-size:24px;font-weight:900;color:#1a2057;letter-spacing:2px;margin:0;">JADUAL VIP MAHA 2026</h1>
+                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#d4a017;letter-spacing:0.5px;">${dateLabel}</div>
+                <div style="margin-top:3px;font-size:11px;color:#666;">${dateSubtitle}</div>
+            </div>
+            <div style="margin-top:12px;display:flex;justify-content:center;gap:24px;font-size:10px;color:#888;">
+                <span>&#128205; MAEPS, Serdang, Selangor</span>
+                <span>&#128197; 28 Ogos - 6 September 2026</span>
+                <span>&#128336; Dijana: ${genTime}</span>
+            </div>
+        </div>
 
-    if (tarikh.value) parts.push(tarikh.options[tarikh.selectedIndex].text);
-    if (lokasi.value) parts.push(lokasi.value);
-    if (vip.value) parts.push(vip.value);
-    if (status.value) parts.push(status.value);
+        <!-- Schedule Body -->
+        <div style="padding:20px 36px 30px;">
+            ${bodyHtml}
+        </div>
 
-    return parts.length > 0 ? parts.join(' • ') : 'Semua Program';
+        <!-- Clean footer line -->
+        <div style="padding:12px 36px;border-top:2px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:9px;color:#999;">SULIT - Untuk kegunaan rasmi sahaja</span>
+            <span style="font-size:9px;color:#999;">www.fama.gov.my | MAHA 2026</span>
+        </div>
+    </div>`;
 }
