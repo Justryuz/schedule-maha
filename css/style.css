@@ -1715,6 +1715,8 @@ body {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem 0;
     }
     .exec-stat-card {
         padding: 0.6rem 0.5rem;
@@ -1735,6 +1737,9 @@ body {
         grid-template-columns: 1fr;
         gap: 1rem;
         margin-top: 1rem;
+    }
+    .exec-charts .chart-card {
+        margin-bottom: 1rem;
     }
 
     /* Mobile exec tagline */
