@@ -1974,6 +1974,169 @@ body.dark-mode .date-picker-item:hover {
     background: #1e2a45;
 }
 
+body.dark-mode .date-picker-item {
+    color: #e8e8e8;
+}
+
+/* Dark mode - Text contrast fixes */
+body.dark-mode .header-title {
+    color: #fff;
+}
+
+body.dark-mode .header-subtitle {
+    color: #9ca3af;
+}
+
+body.dark-mode #currentDateTime {
+    color: #e8e8e8;
+}
+
+body.dark-mode #userBranch {
+    color: #9ca3af;
+}
+
+body.dark-mode .top-bar-left i {
+    color: #9ca3af;
+}
+
+body.dark-mode .schedule-table th {
+    color: #1a1a2e;
+}
+
+body.dark-mode .schedule-table td {
+    color: #e8e8e8;
+}
+
+body.dark-mode .td-masa {
+    color: #fbb034;
+}
+
+body.dark-mode .td-program {
+    color: #f0f0f0;
+}
+
+body.dark-mode .td-lokasi {
+    color: #9ca3af;
+}
+
+body.dark-mode .td-vip {
+    color: #e8e8e8;
+}
+
+body.dark-mode .full-schedule-title,
+body.dark-mode .full-schedule-header h2 {
+    color: #fbb034;
+}
+
+body.dark-mode .exec-stat-label {
+    color: #9ca3af;
+}
+
+body.dark-mode .exec-stat-value {
+    color: #fbb034;
+}
+
+body.dark-mode .exec-stat-header i {
+    color: #6b7280;
+}
+
+body.dark-mode .chart-title {
+    color: #e8e8e8;
+}
+
+body.dark-mode .exec-tagline {
+    color: #fbb034;
+}
+
+body.dark-mode .date-display {
+    color: #e8e8e8;
+}
+
+body.dark-mode .date-display i {
+    color: #9ca3af;
+}
+
+body.dark-mode .nav-arrow {
+    color: #e8e8e8;
+    border-color: #4a5568;
+    background: #1e2a45;
+}
+
+body.dark-mode .card-time {
+    color: #fbb034;
+}
+
+body.dark-mode .card-program {
+    color: #f0f0f0;
+}
+
+body.dark-mode .card-lokasi {
+    color: #9ca3af;
+}
+
+body.dark-mode .empty-state p {
+    color: #9ca3af;
+}
+
+body.dark-mode .filter-sheet-title {
+    color: #fbb034;
+}
+
+body.dark-mode .filter-sheet-close {
+    color: #9ca3af;
+}
+
+body.dark-mode .filter-grid-item label {
+    color: #9ca3af;
+}
+
+body.dark-mode .btn-reset-filter {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .btn-filter-trigger {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .btn-filter-reset-mobile {
+    background: #1e2a45;
+    color: #9ca3af;
+    border-color: #4a5568;
+}
+
+body.dark-mode .bottom-nav-item {
+    color: #6b7280;
+}
+
+body.dark-mode .bottom-nav-item.active {
+    color: #fbb034;
+}
+
+body.dark-mode .date-tab {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .date-tab.active {
+    background: #fbb034;
+    color: #1a1a2e;
+    border-color: #fbb034;
+}
+
+body.dark-mode .footer-motto .motto-line1,
+body.dark-mode .footer-motto .motto-line2 {
+    color: #e8e8e8;
+}
+
+body.dark-mode .footer-logo-kpkm {
+    filter: brightness(0) invert(1);
+}
+
 
 /* ========== FILTER DATE HEADER ROW ========== */
 .filter-date-row td {
@@ -2040,4 +2203,234 @@ body.dark-mode .date-picker-item:hover {
     background: #fee2e2;
     border-color: #dc2626;
     color: #dc2626;
+}
+
+
+/* ========== MOBILE CARDS v3 (Reference Design) ========== */
+.m-card {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.m-card-header {
+    background: var(--primary-navy);
+    color: #fff;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 8px 8px 0 0;
+}
+
+.m-card-header i {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+.m-card-body {
+    padding: 0.75rem 1rem;
+}
+
+.m-card-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.m-card-row:last-child {
+    border-bottom: none;
+}
+
+.m-card-label {
+    font-weight: 700;
+    font-size: 0.72rem;
+    color: var(--text-dark);
+    min-width: 100px;
+    flex-shrink: 0;
+}
+
+.m-card-colon {
+    font-weight: 700;
+    color: var(--text-dark);
+    flex-shrink: 0;
+}
+
+.m-card-value {
+    font-size: 0.78rem;
+    color: var(--text-dark);
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* Full schedule card (no time header bar) */
+.m-card-full {
+    background: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.m-card-full .m-card-row {
+    padding: 0.35rem 0;
+}
+
+.m-card-full .m-card-masa {
+    font-weight: 700;
+    color: var(--primary-navy);
+}
+
+/* Date section header for mobile (navy rounded) */
+.m-date-section-header {
+    background: var(--primary-navy);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: 0.3px;
+}
+
+.m-date-section-header:first-child {
+    margin-top: 0;
+}
+
+.m-date-section-header i {
+    font-size: 0.7rem;
+    opacity: 0.7;
+}
+
+/* Mobile exec stats - navy background */
+@media (max-width: 767px) {
+    .exec-stat-card {
+        background: var(--primary-navy);
+        border-color: var(--primary-navy);
+    }
+    .exec-stat-label {
+        color: rgba(255,255,255,0.8);
+    }
+    .exec-stat-value {
+        color: #fff;
+    }
+    .exec-stat-header i {
+        color: rgba(255,255,255,0.5);
+    }
+}
+
+/* Dark mode mobile cards */
+body.dark-mode .m-card {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .m-card-body {
+    background: #16213e;
+}
+
+body.dark-mode .m-card-row {
+    border-color: #2d3748;
+}
+
+body.dark-mode .m-card-label {
+    color: #9ca3af;
+}
+
+body.dark-mode .m-card-value {
+    color: #e8e8e8;
+}
+
+body.dark-mode .m-card-full {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .m-date-section-header {
+    background: #0f1629;
+}
+
+
+/* ========== MOBILE HEADER BANNER ========== */
+.mobile-banner {
+    display: none;
+    position: relative;
+    background: linear-gradient(135deg, #d4920f 0%, #fbb034 50%, #f5c842 100%);
+    padding: 1rem 1rem 2rem;
+    text-align: center;
+    overflow: hidden;
+}
+
+.mobile-banner-mascot-l,
+.mobile-banner-mascot-r {
+    position: absolute;
+    bottom: 0;
+    height: 70px;
+    width: auto;
+}
+
+.mobile-banner-mascot-l {
+    left: 0.5rem;
+}
+
+.mobile-banner-mascot-r {
+    right: 0.5rem;
+}
+
+.mobile-banner-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.mobile-banner-logo {
+    height: 30px;
+    width: auto;
+}
+
+.mobile-banner-logo.maha {
+    height: 36px;
+}
+
+.mobile-banner-title h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--primary-navy);
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.mobile-banner-title p {
+    font-size: 0.55rem;
+    color: var(--primary-navy);
+    opacity: 0.8;
+    margin: 0.2rem 0 0;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 767px) {
+    .mobile-banner {
+        display: block;
+    }
+    .header {
+        display: none;
+    }
+    .top-bar {
+        display: none;
+    }
 }

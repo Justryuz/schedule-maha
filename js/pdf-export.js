@@ -1,12 +1,10 @@
 /* ========================================
    JADUAL VIP MAHA 2026 - Professional PDF Export
-   Untuk pegawai khas & PA Menteri/KSU
+   Fixed: no overlap, gold header, VIP bold color, proper spacing
    ======================================== */
 
 async function generateSchedulePDF(type) {
-    let data;
-    let dateLabel = '';
-    let dateSubtitle = '';
+    let data, dateLabel = '', dateSubtitle = '';
 
     if (type === 'today') {
         if (availableDates.length > 0) {
@@ -21,75 +19,212 @@ async function generateSchedulePDF(type) {
     } else {
         data = filteredDataFull.length > 0 ? filteredDataFull : allData;
         dateLabel = 'JADUAL PENUH PROGRAM';
-        dateSubtitle = `28 Ogos - 6 September 2026 | ${data.length} Program`;
+        dateSubtitle = `28 Ogos – 6 September 2026 | ${data.length} Program`;
     }
 
-    if (data.length === 0) {
-        alert('Tiada data untuk dimuat turun.');
-        return;
-    }
-
+    if (data.length === 0) { alert('Tiada data untuk dimuat turun.'); return; }
     showLoading(true);
 
     try {
-        const pdfHtml = buildProfessionalPDF(data, dateLabel, dateSubtitle, type);
-        const container = document.getElementById('pdfContainer');
-        const content = document.getElementById('pdfContent');
-        content.innerHTML = pdfHtml;
-        container.style.display = 'block';
-
-        // Wait for rendering
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        const canvas = await html2canvas(content, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            logging: false,
-            width: content.scrollWidth,
-            height: content.scrollHeight
-        });
-
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('portrait', 'mm', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const W = pdf.internal.pageSize.getWidth();
+        const H = pdf.internal.pageSize.getHeight();
+        const M = 12; // margin
+        const CW = W - M * 2; // content width
+        const now = new Date();
+        const genTime = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
 
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        const imgWidth = canvas.width;
-        const imgHeight = canvas.height;
-        const ratio = pdfWidth / imgWidth;
-        const scaledHeight = imgHeight * ratio;
+        // Column widths
+        const col = { masa: 25, program: CW - 25 - 38 - 40, lokasi: 38, vip: 40 };
+        let pageNum = 0;
+        let y = 0;
 
-        if (scaledHeight <= pdfHeight) {
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, scaledHeight);
-        } else {
-            const pageHeightPx = pdfHeight / ratio;
-            let position = 0;
-            let page = 0;
-            while (position < imgHeight) {
-                if (page > 0) pdf.addPage();
-                const sliceH = Math.min(pageHeightPx, imgHeight - position);
-                const sliceCanvas = document.createElement('canvas');
-                sliceCanvas.width = imgWidth;
-                sliceCanvas.height = sliceH;
-                const ctx = sliceCanvas.getContext('2d');
-                ctx.drawImage(canvas, 0, position, imgWidth, sliceH, 0, 0, imgWidth, sliceH);
-                const sliceData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-                pdf.addImage(sliceData, 'JPEG', 0, 0, pdfWidth, sliceH * ratio);
-                position += sliceH;
-                page++;
-            }
+        // Group by date
+        const grouped = new Map();
+        data.forEach(item => {
+            if (!grouped.has(item.tarikh)) grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
+            grouped.get(item.tarikh).items.push(item);
+        });
+
+        // ===== HELPERS =====
+        function newPage() {
+            if (pageNum > 0) pdf.addPage();
+            pageNum++;
+            // Gold top bar
+            pdf.setFillColor(251, 176, 52);
+            pdf.rect(0, 0, W, 2.5, 'F');
+            // Gold bottom bar
+            pdf.setFillColor(251, 176, 52);
+            pdf.rect(0, H - 2.5, W, 2.5, 'F');
         }
 
-        const now = new Date();
-        const timestamp = now.toISOString().slice(0, 10);
-        const filename = `Jadual_VIP_MAHA2026_${type === 'today' ? 'Harian' : 'Penuh'}_${timestamp}.pdf`;
-        pdf.save(filename);
+        function drawFooter() {
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(150, 150, 150);
+            pdf.text('SULIT - Untuk kegunaan rasmi sahaja', M, H - 6);
+            pdf.text('www.fama.gov.my | MAHA 2026', W - M, H - 6, { align: 'right' });
+            pdf.text(`${pageNum}`, W / 2, H - 6, { align: 'center' });
+        }
 
-        container.style.display = 'none';
-        content.innerHTML = '';
+        function checkPage(needed) {
+            if (y + needed > H - 12) {
+                drawFooter();
+                newPage();
+                y = 8;
+                return true;
+            }
+            return false;
+        }
+
+        function getTextHeight(text, maxW) {
+            pdf.setFontSize(7);
+            const lines = pdf.splitTextToSize(text || '', maxW);
+            return Math.max(1, lines.length) * 3.2;
+        }
+
+        function getRowH(item) {
+            const ph = getTextHeight(item.program, col.program - 3);
+            const lh = getTextHeight(item.lokasi, col.lokasi - 3);
+            const vh = getTextHeight(item.vip, col.vip - 3);
+            return Math.max(ph, lh, vh) + 5;
+        }
+
+        // ===== FIRST PAGE HEADER =====
+        newPage();
+        y = 8;
+
+        // Gold header background
+        pdf.setFillColor(251, 176, 52);
+        pdf.rect(0, 2.5, W, 32, 'F');
+
+        // Title
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(26, 32, 87);
+        pdf.text('JADUAL VIP MAHA 2026', W / 2, 14, { align: 'center' });
+
+        // Date label
+        pdf.setFontSize(10);
+        pdf.setTextColor(26, 32, 87);
+        pdf.text(dateLabel, W / 2, 21, { align: 'center' });
+
+        // Subtitle
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(60, 60, 60);
+        pdf.text(dateSubtitle || '', W / 2, 26, { align: 'center' });
+
+        // Meta
+        pdf.setFontSize(6.5);
+        pdf.setTextColor(80, 80, 80);
+        pdf.text(`MAEPS, Serdang, Selangor  |  28 Ogos - 6 September 2026  |  Dijana: ${genTime}`, W / 2, 31, { align: 'center' });
+
+        y = 38;
+
+        // ===== DRAW DATE SECTION =====
+        function drawDateBar(group) {
+            checkPage(18);
+            y += 3;
+            // Navy rounded bar
+            pdf.setFillColor(26, 32, 87);
+            pdf.roundedRect(M, y, CW, 7, 1.5, 1.5, 'F');
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(8);
+            pdf.setTextColor(255, 255, 255);
+            const hariUpper = group.hari ? group.hari.toUpperCase() : '';
+            pdf.text(`${hariUpper}, ${group.formatted.toUpperCase()}`, M + 4, y + 5);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7);
+            pdf.text(`${group.items.length} program`, W - M - 4, y + 5, { align: 'right' });
+            y += 9;
+        }
+
+        function drawColHeader() {
+            // Gold table header
+            pdf.setFillColor(251, 176, 52);
+            pdf.rect(M, y, CW, 6, 'F');
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(26, 26, 46);
+            let x = M + 2;
+            pdf.text('MASA', x, y + 4); x += col.masa;
+            pdf.text('PROGRAM', x, y + 4); x += col.program;
+            pdf.text('KLUSTER/LOKASI', x, y + 4); x += col.lokasi;
+            pdf.text('VIP', x, y + 4);
+            y += 7;
+        }
+
+        function drawRow(item, isAlt) {
+            const rh = getRowH(item);
+
+            // Check page break
+            if (y + rh > H - 12) {
+                drawFooter();
+                newPage();
+                y = 8;
+                drawColHeader(); // Repeat column header on new page
+            }
+
+            // Alternating row bg
+            if (isAlt) {
+                pdf.setFillColor(248, 248, 248);
+                pdf.rect(M, y, CW, rh, 'F');
+            }
+
+            let x = M + 2;
+            const textY = y + 4;
+
+            // Masa - bold navy
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(7);
+            pdf.setTextColor(26, 32, 87);
+            pdf.text(item.masa || '', x, textY, { maxWidth: col.masa - 2 });
+
+            // Program
+            x += col.masa;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(7);
+            pdf.setTextColor(40, 40, 40);
+            const pLines = pdf.splitTextToSize(item.program || '', col.program - 3);
+            pdf.text(pLines, x, textY);
+
+            // Lokasi
+            x += col.program;
+            pdf.setFontSize(6.5);
+            pdf.setTextColor(80, 80, 80);
+            const lLines = pdf.splitTextToSize(item.lokasi || '', col.lokasi - 3);
+            pdf.text(lLines, x, textY);
+
+            // VIP - bold navy (matches web bold style)
+            x += col.lokasi;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(7);
+            pdf.setTextColor(26, 32, 87);
+            const vLines = pdf.splitTextToSize(item.vip || '', col.vip - 3);
+            pdf.text(vLines, x, textY);
+
+            // Row divider
+            pdf.setDrawColor(230, 230, 230);
+            pdf.setLineWidth(0.15);
+            pdf.line(M, y + rh, W - M, y + rh);
+
+            y += rh;
+        }
+
+        // ===== RENDER ALL DATA =====
+        grouped.forEach((group) => {
+            drawDateBar(group);
+            drawColHeader();
+            group.items.forEach((item, idx) => {
+                drawRow(item, idx % 2 === 1);
+            });
+        });
+
+        drawFooter();
+
+        // Save
+        const filename = `Jadual_VIP_MAHA2026_${type === 'today' ? 'Harian' : 'Penuh'}_${now.toISOString().slice(0,10)}.pdf`;
+        pdf.save(filename);
 
     } catch (error) {
         console.error('PDF generation error:', error);
@@ -97,98 +232,4 @@ async function generateSchedulePDF(type) {
     } finally {
         showLoading(false);
     }
-}
-
-function buildProfessionalPDF(data, dateLabel, dateSubtitle, type) {
-    const mahaLogo = 'https://mahaofficial.com.my/assets/maha-2026-logo.webp';
-    const jataLogo = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Coat_of_arms_of_Malaysia.svg/120px-Coat_of_arms_of_Malaysia.svg.png';
-
-    // Group by date
-    const grouped = new Map();
-    data.forEach(item => {
-        if (!grouped.has(item.tarikh)) {
-            grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
-        }
-        grouped.get(item.tarikh).items.push(item);
-    });
-
-    let bodyHtml = '';
-    let dateCount = 0;
-    grouped.forEach((group) => {
-        dateCount++;
-        const hariUpper = group.hari ? group.hari.toUpperCase() : '';
-
-        bodyHtml += `
-        <div style="margin-top:${dateCount === 1 ? '0' : '24px'};page-break-inside:avoid;">
-            <div style="background:#1a2057;color:#fff;padding:10px 20px;border-radius:6px;display:flex;align-items:center;gap:10px;">
-                <span style="font-size:18px;">&#128197;</span>
-                <span style="font-weight:700;font-size:13px;letter-spacing:0.5px;">${hariUpper}, ${group.formatted.toUpperCase()}</span>
-                <span style="margin-left:auto;font-size:11px;opacity:0.7;">${group.items.length} program</span>
-            </div>
-            <table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;">
-                <thead>
-                    <tr>
-                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:110px;">Masa</th>
-                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;">Program</th>
-                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:170px;">Kluster/Lokasi</th>
-                        <th style="background:#fbb034;padding:10px 14px;text-align:left;font-weight:700;font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:#1a1a2e;border-bottom:2px solid #e5a000;width:180px;">VIP</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-        group.items.forEach((item, i) => {
-            const bg = i % 2 === 0 ? '#ffffff' : '#fafafa';
-            bodyHtml += `
-                    <tr style="background:${bg};">
-                        <td style="padding:9px 14px;font-weight:600;font-size:11px;color:#1a2057;border-bottom:1px solid #eee;white-space:nowrap;">${escapeHtml(item.masa)}</td>
-                        <td style="padding:9px 14px;font-size:11px;color:#333;border-bottom:1px solid #eee;line-height:1.4;">${escapeHtml(item.program)}</td>
-                        <td style="padding:9px 14px;font-size:10.5px;color:#555;border-bottom:1px solid #eee;">${escapeHtml(item.lokasi)}</td>
-                        <td style="padding:9px 14px;font-size:10.5px;color:#1a2057;font-weight:600;border-bottom:1px solid #eee;">${escapeHtml(item.vip)}</td>
-                    </tr>`;
-        });
-
-        bodyHtml += `</tbody></table></div>`;
-    });
-
-    // Generated timestamp
-    const now = new Date();
-    const genTime = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-    return `
-    <div style="font-family:'Inter','Segoe UI',sans-serif;width:900px;background:#fff;padding:0;">
-        <!-- Professional Header -->
-        <div style="padding:28px 36px 20px;border-bottom:3px solid #fbb034;">
-            <div style="display:flex;align-items:center;justify-content:space-between;">
-                <div style="display:flex;align-items:center;gap:14px;">
-                    <img src="${jataLogo}" style="height:52px;" crossorigin="anonymous">
-                    <div>
-                        <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px;">Kementerian Pertanian dan Keterjaminan Makanan</div>
-                        <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px;">Lembaga Pemasaran Pertanian Persekutuan (FAMA)</div>
-                    </div>
-                </div>
-                <img src="${mahaLogo}" style="height:56px;" crossorigin="anonymous">
-            </div>
-            <div style="margin-top:18px;text-align:center;">
-                <h1 style="font-family:'Poppins',sans-serif;font-size:24px;font-weight:900;color:#1a2057;letter-spacing:2px;margin:0;">JADUAL VIP MAHA 2026</h1>
-                <div style="margin-top:6px;font-size:14px;font-weight:700;color:#d4a017;letter-spacing:0.5px;">${dateLabel}</div>
-                <div style="margin-top:3px;font-size:11px;color:#666;">${dateSubtitle}</div>
-            </div>
-            <div style="margin-top:12px;display:flex;justify-content:center;gap:24px;font-size:10px;color:#888;">
-                <span>&#128205; MAEPS, Serdang, Selangor</span>
-                <span>&#128197; 28 Ogos - 6 September 2026</span>
-                <span>&#128336; Dijana: ${genTime}</span>
-            </div>
-        </div>
-
-        <!-- Schedule Body -->
-        <div style="padding:20px 36px 30px;">
-            ${bodyHtml}
-        </div>
-
-        <!-- Clean footer line -->
-        <div style="padding:12px 36px;border-top:2px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:9px;color:#999;">SULIT - Untuk kegunaan rasmi sahaja</span>
-            <span style="font-size:9px;color:#999;">www.fama.gov.my | MAHA 2026</span>
-        </div>
-    </div>`;
 }

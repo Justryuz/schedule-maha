@@ -793,6 +793,32 @@ function renderUtamaTable(data) {
 }
 
 // ========== MOBILE CARD RENDERING ==========
+function renderMobileCard(item) {
+    return `<div class="m-card">
+        <div class="m-card-header">
+            <span>${escapeHtml(item.masa)}</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="m-card-body">
+            <div class="m-card-row">
+                <span class="m-card-label">PROGRAM</span>
+                <span class="m-card-colon">:</span>
+                <span class="m-card-value">${escapeHtml(item.program)}</span>
+            </div>
+            <div class="m-card-row">
+                <span class="m-card-label">KLUSTER/LOKASI</span>
+                <span class="m-card-colon">:</span>
+                <span class="m-card-value">${escapeHtml(item.lokasi)}</span>
+            </div>
+            <div class="m-card-row">
+                <span class="m-card-label">VIP</span>
+                <span class="m-card-colon">:</span>
+                <span class="m-card-value">${renderVipBadges(item.vip)}</span>
+            </div>
+        </div>
+    </div>`;
+}
+
 function renderUtamaMobileCards(data) {
     const container = document.getElementById('mobileCardsUtama');
     if (!container) return;
@@ -801,14 +827,12 @@ function renderUtamaMobileCards(data) {
         return;
     }
 
-    // Check if filter is active
     const hasFilter = document.getElementById('filterProgram').value ||
                       document.getElementById('filterLokasi').value ||
                       document.getElementById('filterVIP').value ||
                       document.getElementById('searchInput').value.trim();
 
     if (hasFilter) {
-        // Group by date with date headers
         const grouped = new Map();
         data.forEach(item => {
             if (!grouped.has(item.tarikh)) grouped.set(item.tarikh, { formatted: item.tarikhFormatted, hari: item.hari, items: [] });
@@ -816,30 +840,12 @@ function renderUtamaMobileCards(data) {
         });
         let html = '';
         grouped.forEach(group => {
-            html += `<div class="mobile-date-header">${group.hari.toUpperCase()}, ${group.formatted.toUpperCase()}</div>`;
-            group.items.forEach(item => {
-                html += `<div class="schedule-card">
-                    <div class="card-time">${escapeHtml(item.masa)}</div>
-                    <div class="card-body">
-                        <div class="card-program">${escapeHtml(item.program)}</div>
-                        <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
-                        <div class="card-vips">${renderVipBadges(item.vip)}</div>
-                    </div>
-                </div>`;
-            });
+            html += `<div class="m-date-section-header">${group.hari.toUpperCase()}, ${group.formatted.toUpperCase()} <i class="fas fa-chevron-down"></i></div>`;
+            group.items.forEach(item => { html += renderMobileCard(item); });
         });
         container.innerHTML = html;
     } else {
-        container.innerHTML = data.map(item => `
-            <div class="schedule-card">
-                <div class="card-time">${escapeHtml(item.masa)}</div>
-                <div class="card-body">
-                    <div class="card-program">${escapeHtml(item.program)}</div>
-                    <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
-                    <div class="card-vips">${renderVipBadges(item.vip)}</div>
-                </div>
-            </div>
-        `).join('');
+        container.innerHTML = data.map(item => renderMobileCard(item)).join('');
     }
 }
 
@@ -850,7 +856,6 @@ function renderFullMobileCards(data) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><p>Tiada program dijumpai.</p></div>';
         return;
     }
-    // Group by date
     const grouped = new Map();
     data.forEach(item => {
         if (!grouped.has(item.tarikh)) {
@@ -862,17 +867,31 @@ function renderFullMobileCards(data) {
     let html = '';
     grouped.forEach((group) => {
         const hariUpper = group.hari ? group.hari.toUpperCase() : '';
-        html += `<div class="mobile-date-header">${hariUpper}, ${group.formatted.toUpperCase()}</div>`;
-        html += group.items.map(item => `
-            <div class="schedule-card">
-                <div class="card-time">${escapeHtml(item.masa)}</div>
-                <div class="card-body">
-                    <div class="card-program">${escapeHtml(item.program)}</div>
-                    <div class="card-lokasi"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(item.lokasi)}</div>
-                    <div class="card-vips">${renderVipBadges(item.vip)}</div>
+        html += `<div class="m-date-section-header">${hariUpper}, ${group.formatted.toUpperCase()} <i class="fas fa-chevron-down"></i></div>`;
+        group.items.forEach(item => {
+            html += `<div class="m-card-full">
+                <div class="m-card-row">
+                    <span class="m-card-label">MASA</span>
+                    <span class="m-card-colon">:</span>
+                    <span class="m-card-value m-card-masa">${escapeHtml(item.masa)}</span>
                 </div>
-            </div>
-        `).join('');
+                <div class="m-card-row">
+                    <span class="m-card-label">PROGRAM</span>
+                    <span class="m-card-colon">:</span>
+                    <span class="m-card-value">${escapeHtml(item.program)}</span>
+                </div>
+                <div class="m-card-row">
+                    <span class="m-card-label">KLUSTER/LOKASI</span>
+                    <span class="m-card-colon">:</span>
+                    <span class="m-card-value">${escapeHtml(item.lokasi)}</span>
+                </div>
+                <div class="m-card-row">
+                    <span class="m-card-label">VIP</span>
+                    <span class="m-card-colon">:</span>
+                    <span class="m-card-value">${renderVipBadges(item.vip)}</span>
+                </div>
+            </div>`;
+        });
     });
     container.innerHTML = html;
 }
