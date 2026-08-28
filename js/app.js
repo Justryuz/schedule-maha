@@ -207,10 +207,7 @@ function initDarkMode() {
     }
 }
 
-// ========== AUTO PAGE RELOAD (every 10 seconds) ==========
-setInterval(() => {
-    location.reload();
-}, 10000);
+// ========== TAB MANAGEMENT ==========
 function switchTab(tabId) {
     closeFilterSheet();
     document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -731,8 +728,12 @@ function applyUtamaFilters() {
     const vip = document.getElementById('filterVIP').value;
     const search = document.getElementById('searchInput').value.toLowerCase().trim();
 
+    // If any filter is active, search ALL dates (not just today)
+    const hasFilter = program || lokasi || vip || search;
+
     filteredDataUtama = allData.filter(item => {
-        if (item.tarikh !== currentDate.key) return false;
+        // Only restrict by date if NO filter is active
+        if (!hasFilter && item.tarikh !== currentDate.key) return false;
         if (program && item.program !== program) return false;
         if (lokasi && item.lokasi !== lokasi) return false;
         if (vip && !item.vip.toUpperCase().includes(vip.toUpperCase())) return false;
