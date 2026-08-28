@@ -2471,3 +2471,23 @@ body.dark-mode .m-date-section-header {
         display: none;
     }
 }
+
+
+/* ========== EXEC SPACER (Android fix) ========== */
+.exec-spacer {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .exec-spacer {
+        display: block;
+        height: 16px;
+    }
+    .chart-card {
+        margin-bottom: 16px !important;
+        border-radius: 12px;
+    }
+    .exec-stats {
+        margin-bottom: 0 !important;
+    }
+}

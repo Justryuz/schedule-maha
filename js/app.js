@@ -978,7 +978,7 @@ function renderVipByDayChart() {
         dateCounts[formatDateShort(d.obj)] = vips.size;
     });
     chartInstances.vipByDay = new Chart(ctx, {
-        type: 'bar', data: { labels: Object.keys(dateCounts), datasets: [{ data: Object.values(dateCounts), backgroundColor: '#d4a017', borderRadius: 4, barThickness: 28 }] },
+        type: 'bar', data: { labels: Object.keys(dateCounts), datasets: [{ data: Object.values(dateCounts), backgroundColor: '#d4a017', borderRadius: 3, barThickness: 14 }] },
         options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } }, x: { ticks: { font: { size: 9 }, maxRotation: 45 }, grid: { display: false } } } }
     });
 }
@@ -1006,7 +1006,7 @@ function renderVipByAdminChart() {
     const counts = { 'MENTERI': 0, 'KPKM': 0, 'FAMA': 0 };
     allData.forEach(item => { if (!item.vip) return; const v = item.vip.toUpperCase(); for (const [cat, kw] of Object.entries(cats)) { for (const k of kw) { if (v.includes(k)) { counts[cat]++; break; } } } });
     chartInstances.vipByAdmin = new Chart(ctx, {
-        type: 'bar', data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: '#d4a017', borderRadius: 4, barThickness: 32 }] },
+        type: 'bar', data: { labels: Object.keys(counts), datasets: [{ data: Object.values(counts), backgroundColor: '#d4a017', borderRadius: 3, barThickness: 16 }] },
         options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } }, y: { ticks: { font: { size: 11, weight: '600' } }, grid: { display: false } } } }
     });
 }
