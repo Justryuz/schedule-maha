@@ -160,8 +160,8 @@ function setupEventListeners() {
         item.addEventListener('click', () => switchTab(item.dataset.tab));
     });
 
-    // Filter sheet (mobile)
-    document.getElementById('btnFilterTrigger').addEventListener('click', openFilterSheet);
+    // Filter sheet (mobile) - triggered by 3-dot menu
+    document.getElementById('btn3dotMenu').addEventListener('click', openFilterSheet);
     document.getElementById('filterSheetClose').addEventListener('click', closeFilterSheet);
     document.getElementById('filterBackdrop').addEventListener('click', closeFilterSheet);
 
@@ -171,9 +171,6 @@ function setupEventListeners() {
     // RESET filter button in mobile filter sheet
     document.getElementById('btnResetFilter').addEventListener('click', resetMobileFilters);
     
-    // RESET button next to TAPIS (quick reset)
-    document.getElementById('btnResetMobile').addEventListener('click', resetMobileFilters);
-
     // MUAT SEMULA (reload) button
     document.getElementById('btnReload').addEventListener('click', loadData);
 

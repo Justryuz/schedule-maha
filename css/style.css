@@ -2491,3 +2491,40 @@ body.dark-mode .m-date-section-header {
         margin-bottom: 0 !important;
     }
 }
+
+
+/* ========== 3-DOT MENU BUTTON (Mobile) ========== */
+.btn-3dot-menu {
+    display: none;
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.3);
+    color: var(--primary-navy);
+    font-size: 1rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+@media (max-width: 767px) {
+    .btn-3dot-menu {
+        display: flex;
+    }
+}
+
+
+/* ========== MOBILE: Jadual Penuh header centered ========== */
+@media (max-width: 767px) {
+    .full-schedule-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
