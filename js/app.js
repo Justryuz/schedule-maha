@@ -77,6 +77,7 @@ function renderVipBadges(vipString) {
 
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', () => {
+    initDarkMode();
     updateDateTime();
     setInterval(updateDateTime, 60000);
     loadData();
@@ -183,9 +184,33 @@ function setupEventListeners() {
             renderDateTabs();
         }
     });
+
+    // Theme toggle (dark/light mode)
+    document.getElementById('btnThemeToggle').addEventListener('click', toggleDarkMode);
 }
 
-// ========== TAB MANAGEMENT ==========
+// ========== DARK MODE ==========
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('mahaDarkMode', isDark ? '1' : '0');
+    const icon = document.querySelector('#btnThemeToggle i');
+    icon.className = isDark ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+function initDarkMode() {
+    const saved = localStorage.getItem('mahaDarkMode');
+    if (saved === '1') {
+        document.body.classList.add('dark-mode');
+        const icon = document.querySelector('#btnThemeToggle i');
+        if (icon) icon.className = 'fas fa-moon';
+    }
+}
+
+// ========== AUTO PAGE RELOAD (every 10 seconds) ==========
+setInterval(() => {
+    location.reload();
+}, 10000);
 function switchTab(tabId) {
     closeFilterSheet();
     document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -665,7 +690,13 @@ function populateFilters() {
     allData.forEach(item => {
         if (item.program) programSet.add(item.program);
         if (item.lokasi) lokasiSet.add(item.lokasi);
-        if (item.vip) vipSet.add(item.vip);
+        // Split VIP field by comma to get individual VIP names
+        if (item.vip) {
+            item.vip.split(',').forEach(v => {
+                const trimmed = v.trim();
+                if (trimmed) vipSet.add(trimmed);
+            });
+        }
     });
     populateSelect('filterProgram', 'PROGRAM', [...programSet].sort());
     populateSelect('filterLokasi', 'LOKASI', [...lokasiSet].sort());
@@ -704,7 +735,7 @@ function applyUtamaFilters() {
         if (item.tarikh !== currentDate.key) return false;
         if (program && item.program !== program) return false;
         if (lokasi && item.lokasi !== lokasi) return false;
-        if (vip && item.vip !== vip) return false;
+        if (vip && !item.vip.toUpperCase().includes(vip.toUpperCase())) return false;
         if (search && !`${item.program} ${item.lokasi} ${item.vip} ${item.masa}`.toLowerCase().includes(search)) return false;
         return true;
     });
@@ -794,7 +825,7 @@ function applyFullFilters() {
         if (tarikh && item.tarikh !== tarikh) return false;
         if (program && item.program !== program) return false;
         if (lokasi && item.lokasi !== lokasi) return false;
-        if (vip && item.vip !== vip) return false;
+        if (vip && !item.vip.toUpperCase().includes(vip.toUpperCase())) return false;
         if (search && !`${item.program} ${item.lokasi} ${item.vip} ${item.masa} ${item.tarikhFormatted}`.toLowerCase().includes(search)) return false;
         return true;
     });

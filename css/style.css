@@ -1828,3 +1828,148 @@ body {
     }
 }
 
+
+
+/* ========== DARK MODE ========== */
+body.dark-mode {
+    --bg-light: #1a1a2e;
+    --bg-white: #16213e;
+    --text-dark: #e8e8e8;
+    --text-muted: #9ca3af;
+    --text-light: #6b7280;
+    --border-light: #2d3748;
+    --border-medium: #4a5568;
+    --table-row-alt: #1e2a45;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .header {
+    background: #0f1629;
+    border-color: #2d3748;
+}
+
+body.dark-mode .top-bar {
+    background: #0a0f1f;
+    border-color: #2d3748;
+}
+
+body.dark-mode .nav-tabs {
+    background: #0f1629;
+    border-color: #2d3748;
+}
+
+body.dark-mode .nav-tab {
+    color: #9ca3af;
+}
+
+body.dark-mode .nav-tab.active {
+    color: #fff;
+}
+
+body.dark-mode .nav-tab.active::after {
+    background: #fbb034;
+}
+
+body.dark-mode .btn-reload-nav {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .schedule-table thead {
+    background: #d4920f;
+}
+
+body.dark-mode .schedule-table tbody tr:hover {
+    background: #1e2a45;
+}
+
+body.dark-mode .date-section-header {
+    background: #0f1629;
+}
+
+body.dark-mode .filter-select,
+body.dark-mode .search-input {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .btn-filter-action {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .btn-filter-action.btn-download {
+    background: var(--primary-navy);
+    color: #fff;
+}
+
+body.dark-mode .btn-icon {
+    background: #1e2a45;
+    color: #9ca3af;
+    border-color: #4a5568;
+}
+
+body.dark-mode .exec-stat-card {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .chart-card {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .footer-top {
+    background: linear-gradient(135deg, #1a4a24 0%, #0f3318 100%);
+}
+
+body.dark-mode .footer-bottom {
+    background: #1a1a2e;
+}
+
+body.dark-mode .footer-copyright {
+    background: #0f0f1a;
+    color: #6b7280;
+    border-color: #2d3748;
+}
+
+body.dark-mode .bottom-nav {
+    background: #0f1629;
+    border-color: #2d3748;
+}
+
+body.dark-mode .filter-sheet {
+    background: #16213e;
+}
+
+body.dark-mode .filter-sheet-header {
+    border-color: #2d3748;
+}
+
+body.dark-mode .filter-select-mobile,
+body.dark-mode .filter-input-mobile {
+    background: #1e2a45;
+    color: #e8e8e8;
+    border-color: #4a5568;
+}
+
+body.dark-mode .schedule-card {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .mobile-date-header {
+    background: #0f1629;
+}
+
+body.dark-mode .date-picker-popup {
+    background: #16213e;
+    border-color: #2d3748;
+}
+
+body.dark-mode .date-picker-item:hover {
+    background: #1e2a45;
+}

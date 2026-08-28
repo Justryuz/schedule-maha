@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a2057">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VIP MAHA">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://mahaofficial.com.my/assets/maha-2026-logo.webp">
     <title>Jadual VIP MAHA 2026 | FAMA</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -357,5 +363,13 @@
 
     <script src="js/app.js"></script>
     <script src="js/pdf-export.js"></script>
+    <script>
+        // Register PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('[PWA] Service Worker registered'))
+                .catch(err => console.warn('[PWA] SW registration failed:', err));
+        }
+    </script>
 </body>
 </html>

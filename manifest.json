@@ -1,0 +1,22 @@
+{
+    "name": "Jadual VIP MAHA 2026",
+    "short_name": "VIP MAHA",
+    "description": "Jadual VIP MAHA 2026 - Lembaga Pemasaran Pertanian Persekutuan (FAMA)",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#1a2057",
+    "theme_color": "#1a2057",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "https://mahaofficial.com.my/assets/maha-2026-logo.webp",
+            "sizes": "192x192",
+            "type": "image/webp"
+        },
+        {
+            "src": "https://mahaofficial.com.my/assets/maha-2026-logo.webp",
+            "sizes": "512x512",
+            "type": "image/webp"
+        }
+    ]
+}
