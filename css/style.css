@@ -1356,7 +1356,7 @@ body {
 
 /* ========== FILTER TRIGGER BUTTON (Mobile) ========== */
 .btn-filter-trigger {
-    display: none;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1.2rem;
@@ -2004,4 +2004,40 @@ body.dark-mode .date-picker-item:hover {
 
 .mobile-date-header:first-child {
     margin-top: 0;
+}
+
+
+/* ========== MOBILE FILTER BUTTONS ========== */
+.mobile-filter-buttons {
+    display: none;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+@media (max-width: 767px) {
+    .mobile-filter-buttons {
+        display: flex;
+    }
+}
+
+.btn-filter-reset-mobile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border: 1.5px solid var(--border-medium);
+    border-radius: 25px;
+    background: var(--bg-white);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.btn-filter-reset-mobile:hover {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #dc2626;
 }

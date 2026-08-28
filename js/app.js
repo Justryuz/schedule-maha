@@ -170,6 +170,9 @@ function setupEventListeners() {
     
     // RESET filter button in mobile filter sheet
     document.getElementById('btnResetFilter').addEventListener('click', resetMobileFilters);
+    
+    // RESET button next to TAPIS (quick reset)
+    document.getElementById('btnResetMobile').addEventListener('click', resetMobileFilters);
 
     // MUAT SEMULA (reload) button
     document.getElementById('btnReload').addEventListener('click', loadData);
